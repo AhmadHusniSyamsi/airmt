@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="fw-bold text-center mb-4">STATUS DAFTAR GC LOCALIZER</h2>
+
+    <!-- Input Pencarian -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control shadow-sm" placeholder="Cari...">
+        </div>
+    </div>
+
+    <!-- Tabel Data -->
+    <div class="table-responsive">
+        <table id="gcTable" class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
+            <thead class="bg-gradient text-white" style="background: linear-gradient(90deg, #0d6efd, #0dcaf0);">
+                <tr>
+                    <th>No</th>
+                    <th>Lokasi</th>
+                    <th>Tanggal</th>
+                    <th>Teknisi</th>
+                    <th>Status</th>
+                    <th>Manager</th>
+                    <th>Cetak</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gc in ground_check %}
+                <tr>
+                    <td class="fw-bold">{{ loop.index }}</td>
+                    <td>{{ gc.lokasi }}</td>
+                    <td>{{ gc.tanggal.strftime("%d-%m-%Y") }}</td>
+                    <td>{{ gc.teknisi }}</td>
+                    <td>
+                        {% if gc.status == "Selesai" %}
+                            <span class="badge bg-success px-3 py-2 rounded-pill">Selesai</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Proses</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if gc.manager %}
+                        <span class="fw-semibold">{{ gc.manager }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if gc.status == "Selesai" %}
+                            <a href="{{ url_for('groundcheck.cetak_gc', id=gc.id) }}" target="_blank" 
+                               class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                                <i class="bi bi-printer"></i> Cetak
+                            </a>
+                        {% else %}
+                            <span class="text-muted fst-italic">Waiting respons</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">🚫 Belum ada data groundcheck</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('groundcheck.lihat_data') }}" class="btn btn-secondary shadow-sm">⬅ Kembali</a>
+    </div>   
+</div>
+
+<footer class="text-center text-muted py-3 small bg-white border-top mt-auto">
+    {% block footer %}{% endblock %}
+    &copy; {{ current_year or '2025' }} - AirNav Surabaya
+</footer>
+
+<!-- Script Pencarian -->
+<script>
+document.getElementById("searchInput").addEventListener("keyup", function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#gcTable tbody tr");
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
+    });
+});
+</script>
+
+<!-- Extra CSS -->
+<style>
+    /* Efek hover */
+    #gcTable tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+        transition: 0.2s;
+    }
+
+    /* Biar tabel lebih clean */
+    #gcTable th, #gcTable td {
+        vertical-align: middle;
+        padding: 12px;
+         text-align: center; 
+           padding: 12px;
+    }
+</style>
+{% endblock %}

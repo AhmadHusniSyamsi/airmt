@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Daftar Stasiun</h2>
+
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <a href="{{ url_for('add_station') }}" class="btn btn-primary d-inline-flex align-items-center gap-2">
+            <span class="d-inline-flex justify-content-center align-items-center rounded-circle bg-white text-primary"
+                style="width: 24px; height: 24px;">
+                <i class="bi bi-plus"></i>
+            </span>
+            Add New
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-danger">Lihat Dashboard</a>
+        <a href="{{ url_for('view_data') }}" class="btn btn-danger">Lihat Data </a>
+
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-secondary">
+            <tr>
+                <th class="text-center">Stasiun</th>
+                <!-- <th class="text-center">Frekuensi (MHz)</th> -->
+                <th class="text-center">Channel</th>
+
+                <th style="width: 1%; white-space: nowrap;" class="text-center">Aksi</th>
+                <!-- <th style="width: 1%; white-space: nowrap;" class=""></th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for station in stations %}
+            <tr>
+                <td>{{ station.nama_stasiun }}</td>
+                <td>{{ station.frekuensi }}</td>
+                <td class="text-center" style="width: 1%; white-space: nowrap;">
+                    <a href="{{url_for('add_transmission', nama_stasiun=station.nama_stasiun) }}"
+                        class="btn btn-sm btn-outline-success">
+                        Tambah TX
+                    </a>
+                    <a href="{{url_for('edit_station', id=station.id)}}" class="btn btn-warning btn-sm" title="edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form action="{{url_for('delete_station', id=station.id)}}" method="POST" style="display:inline;"
+                        onsubmit="return confirm('Yakin ingin menghapus stasiun ini?');">
+                        <button type="submit" class="btn btn-danger btn-sm" title="delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

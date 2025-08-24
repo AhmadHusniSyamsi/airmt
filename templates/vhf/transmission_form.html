@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4 class="mb-4">
+        {% if tx %}
+        Edit Data TX untuk: <strong>{{ station.nama_stasiun }}</strong> ({{ station.frekuensi }} MHz)
+        {% else %}
+        Tambah Data TX untuk: <strong>{{ station.nama_stasiun }}</strong> ({{ station.frekuensi }} MHz)
+        {% endif %}
+    </h4>
+    <form method="POST" class="card p-4 shadow-sm">
+        <div class="row">
+            <!-- 
+            <div class="col-md-2"> -->
+
+            <!-- TX1 -->
+            <div class="col-md-6">
+                <h5 class="text-primary">TX1</h5>
+                <div class="mb-3">
+                    <label for="tx1_power" class="form-label">Power O/P (Watt):</label>
+                    <input type="number" step="any" name="tx1_power" id="tx1_power" class="form-control"
+                        value="{{ tx.tx1_power if tx else '' }}" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <label for="tx1_swr" class="form-label">SWR:</label>
+                    <input type="number" step="0.01" name="tx1_swr" id="tx1_swr" class="form-control"
+                        value="{{ tx.tx1_swr if tx else '' }}" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <label for="tx1_mod" class="form-label">Mod%:</label>
+                    <input type="number" step="any" name="tx1_mod" id="tx1_mod" class="form-control"
+                        value="{{ tx.tx1_mod if tx else '' }}" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- TX2 -->
+            <div class="col-md-6">
+                <h5 class="text-primary">TX2</h5>
+                <div class="mb-3">
+                    <label for="tx2_power" class="form-label">Power O/P (Watt):</label>
+                    <input type="number" step="any" name="tx2_power" id="tx2_power" class="form-control"
+                        value="{{ tx.tx2_power if tx else '' }}" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <label for="tx2_swr" class="form-label">SWR:</label>
+                    <input type="number" step="0.01" name="tx2_swr" id="tx2_swr" class="form-control"
+                        value="{{ tx.tx2_swr if tx else '' }}" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <label for="tx2_mod" class="form-label">Mod%:</label>
+                    <input type="number" step="any" name="tx2_mod" id="tx2_mod" class="form-control"
+                        value="{{ tx.tx2_mod if tx else '' }}" autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tanggal dan PIC -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="tanggal" class="form-label">Tanggal:</label>
+                <input type="date" name="tanggal" id="tanggal" class="form-control" required
+                    value="{{ tx.tanggal.strftime('%Y-%m-%d') if tx else '' }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="pic" class="form-label">PIC:</label>
+                <input type="text" name="pic" id="pic" class="form-control" value="{{ tx.pic if tx else '' }}" required
+                    autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="text-center mt-3">
+            <button type="submit" name="action" value="save_and_add"
+                class="btn btn-primary btn-medium w-auto d-inline-block me-2">
+                {% if tx %}Update{% else %}Simpan & Input Lagi{% endif %}
+            </button>
+            <a href="{{ url_for('view_data') }}" class="btn btn-secondary ms-2">Simpan & Kembali</a>
+        </div>
+</div>
+</form>
+</div>
+{% endblock %}

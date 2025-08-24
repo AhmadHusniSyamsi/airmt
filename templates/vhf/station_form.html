@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Tambah Stasiun Baru</h2>
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-danger">Lihat Dashboard</a>
+        <a href="{{ url_for('view_data') }}" class="btn btn-danger">Lihat Data </a>
+    </div>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="nama_stasiun" class="form-label">Nama Stasiun</label>
+            <input type="text" class="form-control" id="nama_stasiun" name="nama_stasiun"
+                value="{{ station.nama_stasiun if station else '' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="frekuensi" class="form-label">Frekuensi (MHz)</label>
+            <input type="text" class="form-control" id="frekuensi" name="frekuensi"
+                value="{{ station.frekuensi if station else '' }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Batal</a>
+    </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="mb-4 fw-bold text-center">GROUND CHECK LOCALIZER PERFORMANCE CURVE</h2>
+
+  <form id="groundCheckForm" method="POST" action="{{ url_for('groundcheck.ground_check') }}">
+
+    <!-- Form Lokasi dan Tanggal -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Lokasi:</label>
+        <select name="lokasi" class="form-select" required>
+          <option value="Airnav Surabaya">AirNav Surabaya</option>
+          <option value="Airnav Malang">AirNav Malang</option>
+          <option value="Airnav Dhoho">AirNav Dhoho</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Tanggal:</label>
+        <input type="date" name="tanggal" class="form-control" required>
+      </div>
+    </div>
+
+    <!-- Tabel Input -->
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-light">
+          <tr>
+            <th rowspan="2">FREQ</th>
+            <th rowspan="2">JARAK (M)</th>
+            <th rowspan="2">DEGREE (°)</th>
+            <th colspan="6">TX 1</th>
+            <th colspan="6">TX 2</th>
+          </tr>
+          <tr>
+            <th>DDM (%)</th><th>DDM (µA)</th><th>SUM (%)</th>
+            <th>MOD 90 Hz</th><th>MOD 150 Hz</th><th>RF LEVEL (dB)</th>
+            <th>DDM (%)</th><th>DDM (µA)</th><th>SUM (%)</th>
+            <th>MOD 90 Hz</th><th>MOD 150 Hz</th><th>RF LEVEL (dB)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set data_90hz = [
+            ("210.1", "35°"), ("173.2", "30°"), ("139.9", "25°"),
+            ("109.2", "20°"), ("80.4", "15°"), ("52.9", "10°"),
+            ("26.2", "5°"), ("9.7", "1.85°")
+          ] %}
+          {% set data_150hz = [
+            ("9.7", "1.85°"), ("26.2", "5°"), ("52.9", "10°"),
+            ("80.4", "15°"), ("109.2", "20°"), ("139.9", "25°"),
+            ("173.2", "30°"), ("210.1", "35°")
+          ] %}
+
+          {% for jarak, degree in data_90hz %}
+          <tr>
+            {% if loop.first %}<td rowspan="{{ data_90hz|length }}">90 Hz</td>{% endif %}
+            <td>{{ jarak }}</td>
+            <td>{{ degree }}</td>
+            {% for i in range(12) %}
+            <td><input type="number" step="any" style="min-width:90px;" class="form-control" name="hz90_{{ loop.index0 }}_{{ i }}"></td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+
+          <tr>
+            <td></td>
+            <td>0</td>
+            <td>0°</td>
+            {% for i in range(12) %}
+            <td><input type="number" step="any" style="min-width:90px;" class="form-control" name="center_{{ i }}"></td>
+            {% endfor %}
+          </tr>
+
+          {% for jarak, degree in data_150hz %}
+          <tr>
+            {% if loop.first %}<td rowspan="{{ data_150hz|length }}">150 Hz</td>{% endif %}
+            <td>{{ jarak }}</td>
+            <td>{{ degree }}</td>
+            {% for i in range(12) %}
+            <td><input type="number" step="any" style="min-width:90px;" class="form-control" name="hz150_{{ loop.index0 }}_{{ i }}"></td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+      </table>
+    </div>
+
+    <div class="text-end mb-4">
+  <button type="button" class="btn btn-primary" onclick="generateGrafik()">Generate Grafik</button>
+  <button type="button" class="btn btn-danger" onclick="resetFormData()">Reset Data</button>
+</div>
+
+<div class="mb-3">
+  <label class="fw-bold me-3">Pilih Grafik:</label>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="chartMode" id="showNormal" value="normal" checked onchange="toggleChartMode()">
+    <label class="form-check-label" for="showNormal">Opsi 1</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="chartMode" id="showMirror" value="mirror" onchange="toggleChartMode()">
+    <label class="form-check-label" for="showMirror">Opsi 2</label>
+  </div>
+</div>
+
+<div id="tx1NormalWrapper" class="my-4 p-3" style="background:white; border-radius:10px;">
+  <canvas id="chartTx1Normal"></canvas>
+</div>
+<div id="tx1MirrorWrapper" class="my-4 p-3" style="background:white; border-radius:10px; display:none;">
+  <canvas id="chartTx1Mirror"></canvas>
+</div>
+<div id="tx2NormalWrapper" class="my-4 p-3" style="background:white; border-radius:10px;">
+  <canvas id="chartTx2Normal"></canvas>
+</div>
+<div id="tx2MirrorWrapper" class="my-4 p-3" style="background:white; border-radius:10px; display:none;">
+  <canvas id="chartTx2Mirror"></canvas>
+</div>
+
+
+    <div class="row mt-2">
+      <div class="col-md-6 d-flex flex-column">
+  <h5 class="fw-bold">Teknisi On Duty:</h5>
+  <div id="teknisi-container">
+    <input type="text" name="teknisi[]" class="form-control mb-2" placeholder="Teknisi">
+  </div>
+  <div class="mt-2">
+    <button type="button" class="btn btn-sm btn-outline-primary" onclick="addField('teknisi')">+ Teknisi</button>
+    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeField('teknisi')">❌</button>
+  </div>
+</div>
+  <div class="row mt-2">
+  <div class="col-12">
+    <label class="form-label fw-bold">Catatan:</label>
+    <textarea name="catatan" class="form-control" rows="3" placeholder="Tambahkan catatan..."></textarea>
+  </div>
+</div>
+    </div>
+  
+
+
+  <div class="mt-4 d-flex justify-content-end align-items-center gap-2 mb-5">
+<label for="manager_tujuan" class="form-label fw-bold"></label>
+<select name="manager_tujuan" class="form-select w-auto" required>
+  <option value="">-- Pilih Manager --</option>
+  <option value="Manager Teknik 1 Agus Dermawan M">Manager Teknik 1 </option>
+  <option value="Manager Teknik 2 Andi Wibowo">Manager Teknik 2 </option>
+  <option value="Manager Teknik 3 Efried N.P">Manager Teknik 3 </option>
+  <option value="Manager Teknik 4 Moch Ichsan">Manager Teknik 4</option>
+  <option value="Manager Teknik 5 Netty Septa C">Manager Teknik 5 </option>
+</select>
+<button type="submit" name="action" value="kirim" class="btn btn-success">
+  Kirim ke Manager
+</button>
+</form>
+  </div>
+</div>
+<footer class="text-center text-muted py-3 small bg-white border-top mt-auto">
+    {% block footer %}{% endblock %}
+    &copy; {{ current_year or '2025' }} - AirNav Surabaya
+</footer>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+
+<script>
+let chartInstances = {}; 
+function addField(type) {
+    let container = document.getElementById(type + '-container');
+
+    let input = document.createElement('input');
+    input.type = 'text';
+    input.name = type + '[]';
+    input.className = 'form-control mb-2';
+    input.placeholder = (type.charAt(0).toUpperCase() + type.slice(1));
+
+    container.appendChild(input);
+}
+
+function removeField(type) {
+    let container = document.getElementById(type + '-container');
+    let inputs = container.querySelectorAll('input');
+    if (inputs.length > 1) { 
+        container.removeChild(inputs[inputs.length - 1]);
+    }
+}
+
+function saveFormData() {
+    let inputs = document.querySelectorAll('#groundCheckForm input, #groundCheckForm select');
+    let formData = {};
+    inputs.forEach(input => {
+        if (input.type === "checkbox" || input.type === "radio") {
+            formData[input.name] = input.checked;
+        } else {
+            formData[input.name] = input.value;
+        }
+    });
+    localStorage.setItem("groundCheckFormData", JSON.stringify(formData));
+}
+
+function loadFormData() {
+    let savedData = localStorage.getItem("groundCheckFormData");
+    if (!savedData) return;
+    let formData = JSON.parse(savedData);
+
+    Object.keys(formData).forEach(name => {
+        let element = document.querySelector(`[name="${name}"]`);
+        if (element) {
+            if (element.type === "checkbox" || element.type === "radio") {
+                element.checked = formData[name];
+            } else {
+                element.value = formData[name];
+            }
+        }
+    });
+}
+
+function toggleChartMode() {
+  let mode = document.querySelector('input[name="chartMode"]:checked').value;
+
+  if (mode === "normal") {
+    document.getElementById("tx1NormalWrapper").style.display = "block";
+    document.getElementById("tx2NormalWrapper").style.display = "block";
+    document.getElementById("tx1MirrorWrapper").style.display = "none";
+    document.getElementById("tx2MirrorWrapper").style.display = "none";
+  } else {
+    document.getElementById("tx1NormalWrapper").style.display = "none";
+    document.getElementById("tx2NormalWrapper").style.display = "none";
+    document.getElementById("tx1MirrorWrapper").style.display = "block";
+    document.getElementById("tx2MirrorWrapper").style.display = "block";
+  }
+}
+
+function resetFormData() {
+    localStorage.removeItem("groundCheckFormData");
+    document.getElementById("groundCheckForm").reset();
+
+    Object.keys(chartInstances).forEach(key => {
+        if (chartInstances[key]) {
+            chartInstances[key].destroy();
+        }
+    });
+    chartInstances = {};
+}
+
+function generateGrafik() {
+    let degrees = [35,30,25,20,15,10,5,1.85,0,1.85,5,10,15,20,25,30,35];
+    let tx1 = [];
+    let tx2 = [];
+
+    let allRows = document.querySelectorAll('tbody tr');
+    allRows.forEach(row => {
+        let inputs = row.querySelectorAll('input[type="number"]');
+        if (inputs.length >= 7) {
+            tx1.push(parseFloat(inputs[0].value) || 0);
+            tx2.push(parseFloat(inputs[6].value) || 0);
+        }
+    });
+
+  
+    let tx1_left  = [...tx1].slice(0,8); 
+    let tx1_right = [...tx1].slice(8);   
+    let tx1MirrorRaw = tx1_left.concat(tx1_right);
+    let tx1MirrorPlot = tx1MirrorRaw.map(v => Math.abs(v));
+    let tx2_left  = [...tx2].slice(0,8);
+    let tx2_right = [...tx2].slice(8);
+    let tx2MirrorRaw = tx2_left.concat(tx2_right);
+    let tx2MirrorPlot = tx2MirrorRaw.map(v => Math.abs(v));
+
+    let degreesMirror = [...degrees];
+
+    function renderChart(canvasId, label, rawData, plotData, labels, color) {
+        if (chartInstances[canvasId]) {
+            chartInstances[canvasId].destroy();
+        }
+
+        chartInstances[canvasId] = new Chart(document.getElementById(canvasId).getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels.map(d => d+"°"),
+                datasets: [{
+                    label: label,
+                    data: plotData,
+                    borderColor: color,
+                    backgroundColor: color.replace('1)', '0.1)'),
+                    pointBackgroundColor: color,
+                    pointRadius: 4,
+                    fill: false,
+                    tension: 0.2,
+                    rawValues: rawData
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: label + ' Ground Performance Curve',
+                        font: { size: 18, weight: 'bold' },
+                        padding: { top: 10, bottom: 20 }
+                    },
+                    datalabels: {
+                        color: 'black',
+                        align: 'top',
+                        font: { weight: 'bold' },
+                        formatter: (value, ctx) => {
+                            let raw = ctx.dataset.rawValues[ctx.dataIndex];
+                            return raw.toFixed(2);
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            verticalLine: {
+                                type: 'line',
+                                xMin: degreesMirror.indexOf(0),
+                                xMax: degreesMirror.indexOf(0),
+                                borderColor: 'black',
+                                borderWidth: 2
+                            },
+                            horizontalLine: {
+                                type: 'line',
+                                yMin: 0,
+                                yMax: 0,
+                                borderColor: 'black',
+                                borderWidth: 2
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Degree (°)' } },
+                    y: { title: { display: true, text: 'DDM (%)' } }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    // OPSI 1
+    renderChart('chartTx1Normal', 'TX1 ', tx1, tx1, degrees, 'rgba(0,0,255,1)');
+    renderChart('chartTx2Normal', 'TX2 ', tx2, tx2, degrees, 'rgba(255,0,0,1)');
+
+    // OPSI 2
+    renderChart('chartTx1Mirror', 'TX1 ', tx1MirrorRaw, tx1MirrorPlot, degreesMirror, 'rgba(0,0,255,1)');
+    renderChart('chartTx2Mirror', 'TX2 ', tx2MirrorRaw, tx2MirrorPlot, degreesMirror, 'rgba(255,0,0,1)');
+}
+
+
+window.addEventListener("load", loadFormData);
+document.getElementById('groundCheckForm').addEventListener("input", saveFormData);
+;
+</script>
+
+
+{% endblock %}

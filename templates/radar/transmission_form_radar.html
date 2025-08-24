@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4 class="mb-4">
+        {% if tx %}
+        Edit Data untuk: <strong>{{ station.nama_stasiun_radar }}</strong> ({{ station.frekuensi_radar }} MHz)
+        {% else %}
+        Tambah Data untuk: <strong>{{ station.nama_stasiun_radar }}</strong> ({{ station.frekuensi_radar }} MHz)
+        {% endif %}
+    </h4>
+
+    <form method="POST" class="card p-4 shadow-sm">
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Nilai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Power Forward</strong></td>
+                        <td>
+                            <input type="number" step="any" name="power_forward" class="form-control"
+                                value="{{ tx.power_forward if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azimuth ILAN<br><u>Encoder</u></strong></td>
+                        <td>
+                            <input type="number" step="any" name="azimuth_ilan" class="form-control"
+                                value="{{ tx.azimuth_ilan if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Power Reflected</strong></td>
+                        <td>
+                            <input type="number" step="any" name="power_reflected" class="form-control"
+                                value="{{ tx.power_refield if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration Mod A<br>(0.8 ms)</strong></td>
+                        <td>
+                            <input type="number" step="any" name="integration_mod_a" class="form-control"
+                                value="{{ tx.integration_mod_a if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration Mod C<br>(21 ms)</strong></td>
+                        <td>
+                            <input type="number" step="any" name="integration_mod_c" class="form-control"
+                                value="{{ tx.integration_mod_c if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration Mod S P₁<br>(0.8 ms)</strong></td>
+                        <td>
+                            <input type="number" step="any" name="mod_s_p1" class="form-control"
+                                value="{{ tx.mod_s_p1 if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration Mod S P₂<br>(0.8 ms)</strong></td>
+                        <td>
+                            <input type="number" step="any" name="mod_s_p2" class="form-control"
+                                value="{{ tx.mod_s_p2 if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Integration Mod S P<sub>G</sub><br>(112 ms)</strong></td>
+                        <td>
+                            <input type="number" step="any" name="mod_s_pg" class="form-control"
+                                value="{{ tx.mod_s_pg if tx else '' }}" autocomplete="off">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tanggal dan PIC -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="tanggal" class="form-label">Tanggal:</label>
+                <input type="date" name="tanggal" id="tanggal" class="form-control" required
+                    value="{{ tx.tanggal.strftime('%Y-%m-%d') if tx else '' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="pic" class="form-label">PIC:</label>
+                <input type="text" name="pic" id="pic" class="form-control" required value="{{ tx.pic if tx else '' }}"
+                    autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Tombol Submit -->
+        <div class="text-center mt-4">
+            <button type="submit" name="action" value="save_and_add" class="btn btn-primary me-2">
+                {% if tx %} Update {% else %} Simpan & Input Lagi {% endif %}
+            </button>
+            <a href="{{ url_for('radar.view_data_radar') }}" class="btn btn-secondary">
+                Simpan & Kembali
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

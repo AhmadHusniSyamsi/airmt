@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ form_title }}</h2>
+    <form method="POST">
+        <div class="row">
+            <!-- G/P Section -->
+            <div class="col-md-4">
+                <h5>G/P</h5>
+                <div class="form-group">
+                    <label>CSB Power</label>
+                    <input type="text" name="gp_csb_power" class="form-control"
+                        value="{{ transmission.gp_csb_power or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>SBO Power</label>
+                    <input type="text" name="gp_sbo_power" class="form-control"
+                        value="{{ transmission.gp_sbo_power or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>SDM 80</label>
+                    <input type="text" name="gp_sdm_80" class="form-control" value="{{ transmission.gp_sdm_80 or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Course DDM</label>
+                    <input type="text" name="gp_course_ddm" class="form-control"
+                        value="{{ transmission.gp_course_ddm or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>DS DDM</label>
+                    <input type="text" name="gp_ds_ddm" class="form-control" value="{{ transmission.gp_ds_ddm or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>CLR DDM</label>
+                    <input type="text" name="gp_clr_ddm" class="form-control"
+                        value="{{ transmission.gp_clr_ddm or '' }}">
+                </div>
+            </div>
+
+            <!-- Localizer Section -->
+            <div class="col-md-4">
+                <h5>Localizer</h5>
+                <div class="form-group">
+                    <label>CSB Power</label>
+                    <input type="text" name="loc_csb_power" class="form-control"
+                        value="{{ transmission.loc_csb_power or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>SBO Power</label>
+                    <input type="text" name="loc_sbo_power" class="form-control"
+                        value="{{ transmission.loc_sbo_power or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>SDM 40</label>
+                    <input type="text" name="loc_sdm_40" class="form-control"
+                        value="{{ transmission.loc_sdm_40 or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Course DDM</label>
+                    <input type="text" name="loc_course_ddm" class="form-control"
+                        value="{{ transmission.loc_course_ddm or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>DS DDM</label>
+                    <input type="text" name="loc_ds_ddm" class="form-control"
+                        value="{{ transmission.loc_ds_ddm or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>CLR DDM</label>
+                    <input type="text" name="loc_clr_ddm" class="form-control"
+                        value="{{ transmission.loc_clr_ddm or '' }}">
+                </div>
+            </div>
+
+            <!-- TDME Section -->
+            <div class="col-md-4">
+                <h5>TDME</h5>
+                <div class="form-group">
+                    <label>TX1 Power</label>
+                    <input type="text" name="tdme_tx1_power" class="form-control"
+                        value="{{ transmission.tdme_tx1_power or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Spacing 1</label>
+                    <input type="text" name="tdme_spacing1" class="form-control"
+                        value="{{ transmission.tdme_spacing1 or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Delay 1</label>
+                    <input type="text" name="tdme_delay1" class="form-control"
+                        value="{{ transmission.tdme_delay1 or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>TX2 Power</label>
+                    <input type="text" name="tdme_tx2_power" class="form-control"
+                        value="{{ transmission.tdme_tx2_power or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Spacing 2</label>
+                    <input type="text" name="tdme_spacing2" class="form-control"
+                        value="{{ transmission.tdme_spacing2 or '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Delay 2</label>
+                    <input type="text" name="tdme_delay2" class="form-control"
+                        value="{{ transmission.tdme_delay2 or '' }}">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Simpan</button>
+        <a href="{{ url_for('ils.view_data_ils') }}" class="btn btn-secondary mt-3">Kembali</a>
+    </form>
+</div>
+{% endblock %}

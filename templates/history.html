@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class="mb-4">Tabel Data Performance Check Peralatan CNSD</h3>
+
+<a href="{{ url_for('home') }}" class="btn btn-secondary mb-3">Kembali</a>
+<a href="{{ url_for('add_station') }}" class="btn btn-primary mb-3">Tambah Stasiun</a>
+<a href="{{ url_for('dashboard') }}" class="btn btn-danger mb-3">Lihat Dashboard</a>
+
+
+
+<div class="container">
+    <h3 class="mb-4">Catatan Pemeriksaan</h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered border-dark table-lg custom-border">
+            <thead class="table-secondary text-center align-middle">
+                <tr>
+                    <th>Column 1</th>
+                    <th>Column 2</th>
+                    <th>Column 3</th>
+                    <th>Column 4</th>
+                    <th>Column 5</th>
+                    <th>Column 6</th>
+                    <th>Column 7</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(1, 11) %}
+                <tr>
+                    <td>{{ i }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

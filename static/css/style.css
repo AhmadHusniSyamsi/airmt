@@ -1,0 +1,390 @@
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --bg-light: #f8f9fa;
+    --text-dark: #333;
+    --text-muted: #6c757d;
+    --table-stripe: #f2f2f2;
+    --table-head-bg: grey;
+    --white: #fff;
+}
+
+
+.bg-overlay {
+    background: url('../img/airnav_logo.png') no-repeat center center;
+    background-size: contain;
+    opacity: 0.2;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -9999;
+    pointer-events: none;
+}
+
+main, nav, footer {
+    position: relative;
+    z-index: 1;
+}
+
+
+
+body {
+    background-color: var(--bg-light);
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* ----------- TABEL ----------- */
+.table {
+    font-size: 0.875rem;
+    word-wrap: break-word;
+    table-layout: auto;
+}
+
+.table th,
+.table td {
+    padding: 0.5rem 0.75rem;
+    vertical-align: middle;
+    text-align: left;
+    max-width: 160px;
+    white-space: normal;
+}
+
+.table thead th {
+    background-color: var(--table-head-bg);
+    color: var(--white);
+    text-align: center;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--table-stripe);
+}
+
+@media (min-width: 992px) {
+  .table {
+    font-size: 1rem; /* naikkan jadi 16px */
+  }
+
+  .table th,
+  .table td {
+    max-width: none; /* biar fleksibel */
+    padding: 0.75rem 1rem; /* beri ruang lebih */
+  }
+}
+
+/* ----------- HEADING & TEXT ----------- */
+h2, h3, h4, h5 {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+p.text-muted {
+    font-size: 0.9rem;
+    color: var(--text-muted) !important;
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+/* ----------- FORM & BUTTON ----------- */
+form select.form-select,
+form button {
+    font-size: 0.875rem;
+}
+
+.btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.hover-scale {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.03);
+  }
+
+/* -----------  GRAFIK ----------- */
+.bg-white.p-3.rounded.shadow-sm {
+    min-height: 280px;
+    overflow-x: auto;
+}
+
+.container {
+    padding-bottom: 3rem;
+}
+.chart-container {
+  position: relative;
+  height: 50vh; /* Atur tinggi agar proporsional dengan viewport */
+  width: 100%; /* Lebar 100% dari parent container */
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .chart-container {
+    height: 70vh; /* Bisa diubah lebih besar di desktop */
+  }
+}
+
+/* ----------- LOGIN GLASS STYLE  ----------- */
+body {
+    background: url('path/logo-airnav.png') no-repeat center center fixed;
+    background-size: cover;
+}
+.login-container {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+
+.login-glass {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgb(29, 27, 27);
+}
+
+.login-glass input {
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    color: white;
+}
+
+.login-glass input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-glass .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.35);
+    border: none;
+    color: white;
+    box-shadow: none;
+}
+
+.login-glass .btn-primary {
+    background-color: rgba(0, 123, 255, 0.7);
+    border: none;
+}
+
+.login-glass a {
+    color: red;
+}
+
+
+/* ----------- Side Bar ----------- */
+
+@media (min-width: 768px) {
+      #sidebar {
+        left: -260px;
+      }
+
+      #sidebar.active {
+        left: 0;
+      }
+
+      .close-sidebar-btn {
+        left: 270px;
+      }
+    }
+#sidebar {
+        width: 250px;
+        background: white;
+        border-right: 1px solid #ddd;
+        position: fixed;
+        top: 0;
+        left: -250px;
+        height: 100%;
+        z-index: 1050;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+        }
+
+    #sidebar.active {
+      left: 0;
+    }
+
+    .close-sidebar-btn {
+      position: fixed;
+      top: 20px;
+      left: 270px;
+      z-index: 1200;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      display: none;
+      transition: left 0.3s ease;
+    }
+
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1040;
+      display: none;
+    }
+
+    .bg-overlay.show {
+      display: block;
+    }
+
+
+    #content {
+    transition: margin-left 0.3s ease;
+    }
+
+    #logoBtn {
+    cursor: pointer;
+    }
+html, body, #content {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+ #content {
+    padding: 0 !important;
+  }
+
+
+  .home-section {
+    background: linear-gradient(180deg, #ffffff 0%, #0a1f44 100%);
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .home-title {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #0a1f44;
+  }
+
+
+  .swiper {
+    width: 100%;
+    max-width: 900px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.swiper-slide:hover img {
+    filter: grayscale(50);
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 300px;
+    height: 400px;
+    transition: all 0.4s ease;
+    filter: blur(4px) brightness(60%);
+    border-radius: 20px;
+}
+
+.swiper-slide img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+    display: block;
+  border-radius: 20px 20px 20px 20px ; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* opsional bayangan */
+}
+
+.swiper-slide-active {
+    filter: blur(0) brightness(100%);
+    transform: scale(1.05);}
+
+.overlay-text {
+   position: absolute;
+    bottom: 15px; 
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 24px;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+}
+
+
+.header-logo {
+    padding-left: 20px;
+    padding-top: 15px;
+}
+
+ .home-section {
+    text-align: center;
+    padding: 20px;
+  }
+  .home-title {
+    font-size: 48px;
+    font-weight: bold;
+  }
+  .lead {
+    font-size: 18px;
+  }
+
+  /* Responsif  */
+  @media (max-width: 768px) {
+    .home-title {
+      font-size: 28px;
+    }
+    .lead {
+      font-size: 14px;
+    }
+}
+
+/* ----------- About ----------- */
+  .about-section {
+    background: linear-gradient(135deg, #0a1f44, #1e3c72);
+    color: #fff;
+  }
+  .about-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+  .about-card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  .about-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.15);
+  }
+  .about-icon {
+    font-size: 2.5rem;
+    color: #ffd700;
+    margin-bottom: 15px;
+  }

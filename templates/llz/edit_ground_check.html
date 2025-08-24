@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="mb-4 fw-bold text-center">EDIT GROUND CHECK LOCALIZER PERFORMANCE CURVE</h2>
+
+  <form id="editGroundCheckForm" method="POST">
+    <!-- Info Utama -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label fw-bold">Lokasi</label>
+        <input type="text" name="lokasi" class="form-control" value="{{ gc.lokasi }}" readonly>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-bold">Tanggal</label>
+        <input type="date" name="tanggal" class="form-control" value="{{ gc.tanggal.strftime('%Y-%m-%d') }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-bold">Teknisi</label>
+        <input type="text" name="teknisi" class="form-control" value="{{ gc.teknisi }}">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Catatan</label>
+        <textarea name="catatan" class="form-control">{{ gc.catatan }}</textarea>
+      </div>
+    </div>
+
+    <!-- TABEL -->
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-light">
+          <tr>
+            <th rowspan="2">FREQ</th>
+            <th rowspan="2">JARAK (M)</th>
+            <th rowspan="2">DEGREE (°)</th>
+            <th colspan="6">TX 1</th>
+            <th colspan="6">TX 2</th>
+          </tr>
+          <tr>
+            <th>DDM (%)</th><th>DDM (µA)</th><th>SUM (%)</th>
+            <th>MOD 90 Hz</th><th>MOD 150 Hz</th><th>RF LEVEL (dB)</th>
+            <th>DDM (%)</th><th>DDM (µA)</th><th>SUM (%)</th>
+            <th>MOD 90 Hz</th><th>MOD 150 Hz</th><th>RF LEVEL (dB)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in gc.rows %}
+          <tr>
+            {% if loop.first or row.freq != gc.rows[loop.index0-1].freq %}
+              <td rowspan="{{ gc.rows|selectattr('freq','equalto',row.freq)|list|length }}">{{ row.freq }}</td>
+            {% endif %}
+            <td>{{ row.jarak }}</td>
+            <td>{{ row.degree }}</td>
+            <td><input type="text" name="tx1_ddm_persen_{{ row.id }}" value="{{ row.tx1_ddm_persen or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx1_ddm_ua_{{ row.id }}" value="{{ row.tx1_ddm_ua or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx1_sum_{{ row.id }}" value="{{ row.tx1_sum or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx1_mod90_{{ row.id }}" value="{{ row.tx1_mod90 or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx1_mod150_{{ row.id }}" value="{{ row.tx1_mod150 or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx1_rf_{{ row.id }}" value="{{ row.tx1_rf or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx2_ddm_persen_{{ row.id }}" value="{{ row.tx2_ddm_persen or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx2_ddm_ua_{{ row.id }}" value="{{ row.tx2_ddm_ua or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx2_sum_{{ row.id }}" value="{{ row.tx2_sum or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx2_mod90_{{ row.id }}" value="{{ row.tx2_mod90 or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx2_mod150_{{ row.id }}" value="{{ row.tx2_mod150 or '' }}" class="form-control"></td>
+            <td><input type="text" name="tx2_rf_{{ row.id }}" value="{{ row.tx2_rf or '' }}" class="form-control"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+      <a href="{{ url_for('groundcheck.lihat_data') }}" class="btn btn-secondary">Batal</a>
+    </div>
+  </form>
+
+  <!-- ================== GRAFIK ================== -->
+  <div class="container mt-5">
+    <h4 class="fw-bold">Grafik Ground Check</h4>
+
+    <canvas id="chartTx1Normal" class="mt-4"></canvas>
+    <canvas id="chartTx2Normal" class="mt-4"></canvas>
+    <canvas id="chartTx1Mirror" class="mt-4"></canvas>
+    <canvas id="chartTx2Mirror" class="mt-4"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let degrees = [35,30,25,20,15,10,5,1.85,0,1.85,5,10,15,20,25,30,35];
+    let tx1 = JSON.parse('{{ gc.rows|map(attribute="tx1_ddm_persen")|list|tojson|safe }}');
+    let tx2 = JSON.parse('{{ gc.rows|map(attribute="tx2_ddm_persen")|list|tojson|safe }}');
+
+    function makeMirror(rawData) {
+        let left  = [...rawData].slice(0,8);
+        let right = [...rawData].slice(8);
+        let rawMirror = left.concat(right);
+        let plotMirror = rawMirror.map(v => v !== null ? Math.abs(v) : null);
+        return { rawMirror, plotMirror };
+    }
+
+    let tx1Mirror = makeMirror(tx1);
+    let tx2Mirror = makeMirror(tx2);
+
+    function renderChart(canvasId, label, rawData, plotData, labels, color) {
+        new Chart(document.getElementById(canvasId).getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels.map(d => d+"°"),
+                datasets: [{
+                    label: label,
+                    data: plotData,
+                    borderColor: color,
+                    backgroundColor: color.replace('1)', '0.1)'),
+                    pointBackgroundColor: color,
+                    pointRadius: 4,
+                    tension: 0.2,
+                    rawValues: rawData
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: label + ' Ground Performance Curve',
+                        font: { size: 18, weight: 'bold' }
+                    },
+                    datalabels: {
+                        color: 'black',
+                        align: 'top',
+                        font: { weight: 'bold' },
+                        formatter: (value, ctx) => {
+                            let raw = ctx.dataset.rawValues[ctx.dataIndex];
+                            return raw !== null ? raw.toFixed(2) : '';
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            verticalLine: {
+                                type: 'line',
+                                xMin: labels.indexOf(0),
+                                xMax: labels.indexOf(0),
+                                borderColor: 'black',
+                                borderWidth: 2
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Degree (°)' } },
+                    y: { title: { display: true, text: 'DDM (%)' } }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    renderChart('chartTx1Normal', 'TX1 Normal', tx1, tx1, degrees, 'rgba(0,0,255,1)');
+    renderChart('chartTx2Normal', 'TX2 Normal', tx2, tx2, degrees, 'rgba(255,0,0,1)');
+    renderChart('chartTx1Mirror', 'TX1 Mirror', tx1Mirror.rawMirror, tx1Mirror.plotMirror, degrees, 'rgba(0,0,255,1)');
+    renderChart('chartTx2Mirror', 'TX2 Mirror', tx2Mirror.rawMirror, tx2Mirror.plotMirror, degrees, 'rgba(255,0,0,1)');
+});
+</script>
+{% endblock %}
+{% block footer %}{% endblock %}

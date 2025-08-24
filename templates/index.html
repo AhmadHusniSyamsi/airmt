@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+
+
+<section class="home-section text-center py-5">
+  <p class="text-uppercase fw-bold" style="color:#0a1f44;">Welcome to</p>
+  <h1 class="home-title">AirNav Surabaya</h1>
+  <p class="lead" style="color:#0a1f44;">Aviation Monitoring & Performance Check</p>
+
+  <!-- Swiper Slider -->
+  <div class="swiper mySwiper mt-4">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide">
+            <img src="{{ url_for('static', filename='img/llz.jpg') }}" alt="1">
+            <h5 class="overlay-text">Localizer</h5>
+        </div>
+        <div class="swiper-slide">
+            <img src="{{ url_for('static', filename='img/3.jpg') }}" alt="2">
+            <h5 class="overlay-text">2</h5>
+        </div>
+        <div class="swiper-slide">
+            <img src="{{ url_for('static', filename='img/dvor.jpg') }}" alt="3">
+            <h5 class="overlay-text">3</h5>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modern About Us Section -->
+<section class="about-section py-5">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2>About Us</h2>
+      <p class="lead">Professional Navigation & Monitoring for Safer Skies</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="about-card text-center">
+          <div class="about-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+          <h5>Real-Time Monitoring</h5>
+          <p>Kami memantau alat navigasi penerbangan secara langsung untuk menjaga akurasi dan keamanan.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="about-card text-center">
+          <div class="about-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h5>Performance Analysis</h5>
+          <p>Analisis performa sistem untuk meningkatkan efisiensi dan mengoptimalkan jalur penerbangan.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="about-card text-center">
+          <div class="about-icon"><i class="fa-solid fa-headset"></i></div>
+          <h5>24/7 Technical Support</h5>
+          <p>Dukungan teknis penuh setiap saat untuk menjamin kelancaran operasional.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+
+  var swiper = new Swiper(".mySwiper", {
+    grabCursor: true,
+    centeredSlides: true,
+    slidesPerView: 1,
+    spaceBetween: 20,
+    loop: false, 
+    speed: 800,
+    coverflowEffect: {
+      rotate: 0,
+      stretch: 0,
+      depth: 100,
+      modifier: 3,
+      slideShadows: false,
+      
+    },
+    breakpoints: {
+    576: { slidesPerView: 2, spaceBetween: 20 },  // tablet kecil
+    992: { slidesPerView: 3, spaceBetween: 30 }   // desktop
+  }
+  });
+
+
+  let direction = 1; 
+  setInterval(function () {
+    if (direction === 1) {
+      if (swiper.isEnd) {
+        direction = -1;
+        swiper.slidePrev();
+      } else {
+        swiper.slideNext();
+      }
+    } else {
+      if (swiper.isBeginning) {
+        direction = 1;
+        swiper.slideNext();
+      } else {
+        swiper.slidePrev();
+      }
+    }
+  }, 2000);
+</script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

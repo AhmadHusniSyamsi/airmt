@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Dashboard dme<h3>
+        <div class="container mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Dashboard Data DME</h2>
+            </div>
+
+            <!-- Filter Form -->
+            <form method="POST" class="row g-3 mb-4">
+                <div>
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary">← Kembali</a>
+                    <a href="{{ url_for('dme.add_station_dme') }}"
+                        class="btn btn-primary d-inline-flex align-items-center gap-2">
+                        <span
+                            class="d-inline-flex justify-content-center align-items-center rounded-circle bg-white text-primary"
+                            style="width: 24px; height: 24px;">
+                            <i class="bi bi-plus"></i>
+                        </span>
+                        Add New dme
+                    </a>
+
+                    <a href="{{ url_for('dme.view_data_dme') }}" class="btn btn-danger">Lihat Data </a>
+                    <a href="{{ url_for ('dme.stationlist_dme') }}" class="btn btn-danger">Daftar Stasiun</a>
+
+                </div>
+
+                <div class="col-md-3">
+                    <label for="station_id" class="form-label">Filter Stasiun:</label>
+                    <select name="station_id" class="form-select">
+                        <option value="">-- Semua Stasiun --</option>
+                        {% for st in stations %}
+                        <option value="{{ st.id }}" {% if selected_station_id and st.id==selected_station_id|int
+                            %}selected{% endif %}>
+                            {{ st.nama_stasiun_dme }} - {{ st.frekuensi_dme }} MHz
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="year" class="form-label">Tahun:</label>
+                    <select name="year" class="form-select">
+                        <option value="">Semua</option>
+                        {% for y in years %}
+                        <option value="{{ y }}" {% if selected_year==y %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="month" class="form-label">Bulan:</label>
+                    <select name="month" class="form-select">
+                        <option value="">Semua</option>
+                        {% for m in range(1,13) %}
+                        <option value="{{ m }}" {% if selected_month==m %}selected{% endif %}>{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="day" class="form-label">Tanggal:</label>
+                    <select name="day" class="form-select">
+                        <option value="">Semua</option>
+                        {% for d in range(1,32) %}
+                        <option value="{{ d }}" {% if selected_day==d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Terapkan</button>
+                </div>
+            </form>
+
+            <!-- Grafik Power Output (besar) -->
+            <div class="mb-5">
+                <h4>Visualisasi Power Output TX1 & TX2</h4>
+                <div class="bg-white p-3 rounded shadow-sm">
+                    {{ chart_power|safe }}
+                </div>
+                <p class="text-muted">{{ summary.power_summary }}</p>
+            </div>
+
+            <!-- 3 Grafik Sejajar -->
+            <div class="row mb-5">
+                <div class="col-md-4">
+                    <h4>PIC Paling Aktif</h4>
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        {{ chart_pic|safe }}
+                    </div>
+                    <p class="text-muted">{{ summary.pic_summary }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h4>Spacing</h4>
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        {{ chart_spacing|safe }}
+                    </div>
+                    <p class="text-muted">{{ summary.spacing_summary }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h4>Rata-rata Modulasi per Stasiun</h4>
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        {{ chart_avg_delay|safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2 Grafik Sejajar -->
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <h4>Grouped Bar TX1 vs TX2</h4>
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        {{ chart_grouped|safe }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4>Rata-rata Power per Stasiun</h4>
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        {{ chart_avg_power|safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Data -->
+            <div class="mb-5">
+                <h4>Data Transmisi</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Stasiun</th>
+                                <th>Frekuensi</th>
+                                <th>TX1 Power</th>
+                                <th>Spacing</th>
+                                <th>Delay</th>
+                                <th>TX2 Power</th>
+                                <th>Spacing</th>
+                                <th>Delay</th>
+                                <th>Tanggal</th>
+                                <th>PIC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr>
+                                <td>{{ row.nama_stasiun_dme }}</td>
+                                <td>{{ row.frekuensi_dme }}</td>
+                                <td>{{ row.tx1_power }}</td>
+                                <td>{{ row.tx1_spacing }}</td>
+                                <td>{{ row.tx1_delay }}</td>
+                                <td>{{ row.tx2_power }}</td>
+                                <td>{{ row.tx2_spacing }}</td>
+                                <td>{{ row.tx2_delay }}</td>
+                                <td>{{ row.tanggal.strftime('%d-%m-%Y') }}</td>
+                                <td>{{ row.pic }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endblock %}

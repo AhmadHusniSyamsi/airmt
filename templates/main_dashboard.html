@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+
+<section class="dashboard-section py-5">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2 class="fw-bold gradient-text">
+  Dashboard Monitoring Performance Check
+</h2>
+<p class="sub-gradient-text">
+  Pilih untuk melihat data monitoring
+</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <!-- VHF -->
+      <div class="col" data-aos="zoom-in" data-aos-delay="100">
+        <a href="{{ url_for('dashboard') }}" class="text-decoration-none">
+          <div class="dashboard-card">
+            <i class="bi bi-broadcast icon"></i>
+            <h5 class="fw-bold text-white">VHF</h5>
+            <p class="text-muted">Very High Frequency</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- ILS -->
+      <div class="col" data-aos="zoom-in" data-aos-delay="200">
+        <a href="{{ url_for('ils.dashboard_ils') }}" class="text-decoration-none">
+          <div class="dashboard-card">
+            <i class="bi bi-airplane icon"></i>
+            <h5 class="fw-bold text-white">ILS</h5>
+            <p class="text-muted">Instrument Landing System</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- DVOR -->
+      <div class="col" data-aos="zoom-in" data-aos-delay="200">
+        <a href="{{ url_for('dvor.dvor_dashboard') }}" class="text-decoration-none">
+          <div class="dashboard-card">
+            <i class="bi bi-wifi icon"></i>
+            <h5 class="fw-bold text-white">DVOR</h5>
+            <p class="text-muted">Doppler VHF Omni Range</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Radar -->
+      <div class="col" data-aos="zoom-in" data-aos-delay="400">
+        <a href="{{ url_for('radar.radar_dashboard') }}" class="text-decoration-none">
+          <div class="dashboard-card">
+            <i class="bi bi-bullseye icon"></i>
+            <h5 class="fw-bold text-white">Radar</h5>
+            <p class="text-muted">Radar Monitoring</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- DME -->
+      <div class="col" data-aos="zoom-in" data-aos-delay="500">
+        <a href="{{ url_for('dme.dme_dashboard') }}" class="text-decoration-none">
+          <div class="dashboard-card">
+            <i class="bi bi-geo-alt icon"></i>
+            <h5 class="fw-bold text-white">DME</h5>
+            <p class="text-muted">Distance Measurement Equipment</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- History -->
+      <div class="col" data-aos="zoom-in" data-aos-delay="600">
+        <a href="{{ url_for('history') }}" class="text-decoration-none">
+          <div class="dashboard-card">
+            <i class="bi bi-clock-history icon"></i>
+            <h5 class="fw-bold text-white">History</h5>
+            <p class="text-muted">Catatan Pemeriksaan</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.dashboard-section {
+   background: linear-gradient(
+    to bottom,
+    #ffffff 0%,    /* putih di paling atas */
+    #f2f6fb 15%,   /* abu muda lebih lembut */
+    #012b5a 55%,   /* biru utama */
+    #0a1f44 100%   /* biru gelap */
+  );
+  min-height: auto;       /* ✅ penuh 1 layar */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* konten di tengah */
+  padding: auto;      /* ruang atas bawah */
+}
+
+@media (max-width: 768px) {
+  .dashboard-section {
+    min-height: auto;      /* ✅ biar di HP tinggi menyesuaikan */
+    padding-top: auto;
+    padding-bottom: auto;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(180deg, #ffffff 0%, #0a1f44 100%);
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: bold;
+}
+
+.sub-gradient-text {
+  background: linear-gradient(180deg, #ffffff 0%, #0a1f44 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+/* Card Style */
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 2rem 1.2rem;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.5);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Icon Style */
+.dashboard-card .icon {
+  font-size: 3rem;
+  color: #fbc02d;
+  margin-bottom: 1rem;
+}
+
+.dashboard-card h5 {
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+}
+
+.dashboard-card p {
+  font-size: 1rem;
+}
+
+</style>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init({
+  duration: 1000,
+  once: false,   
+  mirror: true   
+});
+
+</script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

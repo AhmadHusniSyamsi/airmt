@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class="mb-4">Tabel Data Performance Check Radar</h3>
+
+<a href="{{ url_for('home') }}" class="btn btn-secondary mb-3">Kembali</a>
+<a href="{{ url_for('radar.add_station_radar') }}" class="btn btn-primary mb-3">Tambah Stasiun</a>
+<a href="{{ url_for('radar.radar_dashboard') }}" class="btn btn-danger mb-3">Lihat Dashboard</a>
+
+{% for item in grouped_data_radar %}
+<h5 class="mt-5 p-2 bg-light border-start border-4 border-primary">
+    <i class="bi bi-broadcast me-2 text-danger"></i>
+    {{ item.station_radar.nama_stasiun_radar }} - {{ item.station_radar.frekuensi_radar }} MHz
+</h5>
+
+{% for year, txs in item.per_year.items() %}
+<h6 class="mt-3 text-muted">Tahun: {{ year }}</h6>
+<table class="table table-bordered table-striped">
+    <thead class="table-secondary text-center">
+        <tr>
+            <th rowspan="2">Power<br>Forward</th>
+            <th rowspan="2">Azimuth Ilan<br><u>Encoder</u></th>
+            <th rowspan="2">Power<br><u>Reflected</u></th>
+            <th colspan="1">Mod A</th>
+            <th colspan="1">Mod C</th>
+            <th colspan="3">Mod S</th>
+            <th rowspan="2">Tanggal</th>
+            <th rowspan="2">PIC</th>
+            <th rowspan="2"><i class="bi bi-tools"></i></th>
+        </tr>
+        <tr class="text-center">
+            <th>0.8 ms</th>
+            <th>21 ms</th>
+            <th>P1<br>0.8 ms</th>
+            <th>P2<br>0.8 ms</th>
+            <th>PG<br>112 ms</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in txs %}
+        <tr>
+            <td>{{ row.power_forward or '' }}</td>
+            <td>{{ row.azimuth_ilan or '' }}</td>
+            <td>{{ row.power_reflected or '' }}</td>
+            <td>{{ row.integration_mod_a or '' }}</td>
+            <td>{{ row.integration_mod_c or '' }}</td>
+            <td>{{ row.mod_s_p1 or '' }}</td>
+            <td>{{ row.mod_s_p2 or '' }}</td>
+            <td>{{ row.mod_s_pg or '' }}</td>
+            <td>{{ row.tanggal.strftime('%d %b %Y') }}</td>
+            <td>{{ row.pic }}</td>
+            <td class="text-center">
+                <a href="{{ url_for('radar.edit_transmission_radar', id=row.id) }}"
+                    class="btn btn-sm btn-warning me-1"><i class="bi bi-pencil-square"></i></a>
+                <a href="{{ url_for('radar.delete_transmission_radar', id=row.id) }}" class="btn btn-sm btn-danger"
+                    onclick="return confirm('Yakin ingin menghapus data ini?')"><i class="bi bi-trash"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endfor %}
+{% endfor %}
+{% endblock %}

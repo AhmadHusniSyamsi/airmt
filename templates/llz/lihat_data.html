@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="fw-bold text-center mb-4">DAFTAR GC LOCALIZER</h2>
+
+    <!-- Tombol Navigasi & Cari -->
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-6 mb-2 mb-md-0">
+            <input type="text" id="searchInput" class="form-control shadow-sm" placeholder="Cari...">
+        </div>
+        <div class="col-md-6 d-flex gap-2 flex-wrap justify-content-md-end">
+            <a href="{{ url_for('groundcheck.ground_check') }}" class="btn btn-primary shadow-sm">
+                + Input Baru
+            </a>
+            <a href="{{ url_for('groundcheck.cek_status') }}" class="btn btn-primary shadow-sm">
+                Cek Status
+            </a>
+        </div>
+    </div>
+
+    <!-- Tabel Data -->
+    <div class="table-responsive">
+        <table id="gcTable" class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
+            <thead class="text-white text-center" style="background: linear-gradient(90deg, #0d6efd, #0dcaf0);">
+                <tr>
+                    <th>No</th>
+                    <th>Lokasi</th>
+                    <th>Tanggal</th>
+                    <th>Teknisi</th>
+                    <th>Catatan</th>
+                    <th><i class="bi bi-tools"></i></th>
+                    {% if current_user.username|lower in ["andi wibowo", "agus dermawan m", "efried n.p", "netty septa c"] %}
+                        <th>Status</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for gc in ground_check %}
+                <tr>
+                    <td class="fw-bold text-center">{{ loop.index }}</td>
+                    <td>{{ gc.lokasi }}</td>
+                    <td>{{ gc.tanggal.strftime("%d-%m-%Y") }}</td>
+                    <td style="white-space: normal; max-width: 150px;">{{ gc.teknisi }}</td>
+                    <td style="white-space: normal; max-width: 200px;">{{ gc.catatan }}</td>
+
+                    <!-- Tombol Aksi -->
+                    <td>
+                        <div class="d-flex flex-wrap gap-1 justify-content-center">
+                            <a href="{{ url_for('groundcheck.detail_data', id=gc.id) }}" 
+                               class="btn btn-sm btn-outline-info" title="Detail">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('groundcheck.edit_ground_check', id=gc.id) }}" 
+                               class="btn btn-sm btn-outline-warning" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{{ url_for('groundcheck.delete_ground_check', id=gc.id) }}" 
+                               class="btn btn-sm btn-outline-danger" title="Hapus"
+                               onclick="return confirm('Yakin ingin menghapus data ini?')">
+                               <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+
+                    <!-- Kolom Status khusus Manager -->
+                    {% if current_user.username|lower in ["andi wibowo", "agus dermawan m", "efried n.p", "netty septa c"] %}
+                        <td class="text-center">
+                            {% if gc.status == "Selesai" %}
+                                <span class="badge bg-success px-3 py-2 rounded-pill">Selesai</span><br>
+                                <small class="text-muted">Manager: {{ gc.manager }}</small>
+                            {% else %}
+                                <form action="{{ url_for('groundcheck.acc', id=gc.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm shadow-sm">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="{% if current_user.username|lower in ['andi wibowo','agus dermawan m','efried n.p','netty septa c'] %}7{% else %}6{% endif %}" 
+                        class="text-center text-muted py-4">Belum ada data</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary shadow-sm">⬅ Kembali</a>
+    </div>
+</div>
+
+<footer class="text-center text-muted py-3 small bg-white border-top mt-auto">
+    {% block footer %}{% endblock %}
+    &copy; {{ current_year or '2025' }} - AirNav Surabaya
+</footer>
+
+<!-- Script Filter Cari -->
+<script>
+document.getElementById("searchInput").addEventListener("keyup", function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#gcTable tbody tr");
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
+    });
+});
+</script>
+
+<!-- Extra CSS -->
+<style>
+    #gcTable th, #gcTable td {
+        padding: 12px;
+        vertical-align: middle;
+         text-align: center; 
+    }
+    #gcTable tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+        transition: 0.2s;
+    }
+
+    /* Responsive Mobile */
+    @media (max-width: 768px) {
+        #gcTable {
+            font-size: 13px;
+        }
+        #gcTable th, #gcTable td {
+            padding: 6px;
+            white-space: normal !important;
+            word-wrap: break-word;
+        }
+        /* Tombol aksi lebih kecil */
+        #gcTable .btn {
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+    }
+</style>
+{% endblock %}

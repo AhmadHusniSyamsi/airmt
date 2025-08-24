@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Daftar Stasiun Radar</h2>
+
+    <div class="d-flex justify-content-start mb-3 gap-2">
+        <a href="{{ url_for('radar.add_station_radar') }}"
+            class="btn btn-primary d-inline-flex align-items-center gap-2">
+            <span class="d-inline-flex justify-content-center align-items-center rounded-circle bg-white text-primary"
+                style="width: 24px; height: 24px;">
+                <i class="bi bi-plus"></i>
+            </span>
+            Tambah Stasiun
+        </a>
+        <a href="{{ url_for('radar.radar_dashboard') }}" class="btn btn-danger">Lihat Dashboard</a>
+        <a href="{{ url_for('radar.view_data_radar') }}" class="btn btn-danger">Lihat Data</a>
+    </div>
+
+    <div class="card shadow-sm rounded">
+        <div class="card-body">
+            <table class="table table-bordered table-striped mb-0">
+                <thead class="table-secondary text-center">
+                    <tr>
+                        <th>Stasiun</th>
+                        <th>Frekuensi (MHz)</th>
+                        <th style="width: 1%; white-space: nowrap;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for station in stations %}
+                    <tr>
+                        <td>{{ station.nama_stasiun_radar }}</td>
+                        <td>{{ station.frekuensi_radar }}</td>
+                        <td class="text-center" style="white-space: nowrap;">
+                            <a href="{{ url_for('radar.add_transmission_radar', nama_stasiun=station.nama_stasiun_radar) }}"
+                                class="btn btn-sm btn-outline-success">
+                                Tambah
+                            </a>
+                            <a href="{{ url_for('radar.edit_station_radar', id=station.id) }}"
+                                class="btn btn-warning btn-sm" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form action="{{ url_for('radar.delete_station_radar', id=station.id) }}" method="POST"
+                                style="display:inline;"
+                                onsubmit="return confirm('Yakin ingin menghapus stasiun ini?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

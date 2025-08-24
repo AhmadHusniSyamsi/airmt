@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Dashboard Radar</h3>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Dashboard Data Radar</h2>
+    </div>
+
+    <!-- Filter Form -->
+    <form method="POST" class="row g-3 mb-4">
+        <div>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">← Kembali</a>
+            <a href="{{ url_for('radar.add_station_radar') }}"
+                class="btn btn-primary d-inline-flex align-items-center gap-2">
+                <span
+                    class="d-inline-flex justify-content-center align-items-center rounded-circle bg-white text-primary"
+                    style="width: 24px; height: 24px;">
+                    <i class="bi bi-plus"></i>
+                </span>
+                Add New Radar
+            </a>
+
+            <a href="{{ url_for('radar.view_data_radar') }}" class="btn btn-danger">Lihat Data </a>
+            <a href="{{ url_for('radar.stationlist_radar') }}" class="btn btn-danger">Daftar Stasiun</a>
+        </div>
+
+        <div class="col-md-3">
+            <label for="station_id" class="form-label">Filter Stasiun:</label>
+            <select name="station_id" class="form-select">
+                <option value="">-- Semua Stasiun --</option>
+                {% for st in stations %}
+                <option value="{{ st.id }}" {% if selected_station_id and st.id==selected_station_id|int %}selected{%
+                    endif %}>
+                    {{ st.nama_stasiun_radar }} - {{ st.frekuensi_radar }} MHz
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="year" class="form-label">Tahun:</label>
+            <select name="year" class="form-select">
+                <option value="">Semua</option>
+                {% for y in years %}
+                <option value="{{ y }}" {% if selected_year==y %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="month" class="form-label">Bulan:</label>
+            <select name="month" class="form-select">
+                <option value="">Semua</option>
+                {% for m in range(1,13) %}
+                <option value="{{ m }}" {% if selected_month==m %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="day" class="form-label">Tanggal:</label>
+            <select name="day" class="form-select">
+                <option value="">Semua</option>
+                {% for d in range(1,32) %}
+                <option value="{{ d }}" {% if selected_day==d %}selected{% endif %}>{{ d }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Terapkan</button>
+        </div>
+    </form>
+
+    <!-- Grafik Power Output (besar) -->
+    <div class="mb-5">
+        <h4>Visualisasi Power Forward</h4>
+        <div class="bg-white p-3 rounded shadow-sm">
+            {{ chart_pf|safe }}
+        </div>
+        <p class="text-muted">
+            Rata-rata Power Forward: {{ summary.avg_power_forward if summary else 'N/A' }} Watt<br>
+            Rata-rata Power Reflected: {{ summary.avg_power_reflected if summary else 'N/A' }} Watt
+        </p>
+    </div>
+
+    <!-- 3 Grafik Sejajar -->
+    <div class="row mb-5">
+
+        <div class="col-md-4">
+            <h4>Integrasi Mod A</h4>
+            <div class="bg-white p-3 rounded shadow-sm">
+                {{ chart_mod_a|safe }}
+            </div>
+            <p class="text-muted">
+                {{ summary.mod_a_summary if summary and summary.mod_a_summary else 'Tidak tersedia' }}
+            </p>
+        </div>
+        <div class="col-md-4">
+            <h4>Distribusi Azimuth</h4>
+            <div class="bg-white p-3 rounded shadow-sm">
+                {{ chart_azimuth|safe }}
+            </div>
+            <p class="text-muted">
+                {{ summary.azimuth_summary if summary and summary.azimuth_summary else 'Tidak tersedia' }}
+            </p>
+        </div>
+        <div class="col-md-4">
+            <h4>Integrasi Mod C</h4>
+            <div class="bg-white p-3 rounded shadow-sm">
+                {{ chart_mod_c|safe }}
+            </div>
+            <p class="text-muted">
+                {% if summary %}
+                MOD A: {{ summary.avg_mod_a }} &nbsp;
+                MOD C: {{ summary.avg_mod_c }} &nbsp;
+                MOD S P1: {{ summary.avg_mod_s_p1 }}
+                MOD S P2: {{ summary.avg_mod_s_p2 }}
+                MOD S PG: {{ summary.avg_mod_s_pg }}
+                {% else %}
+                Tidak tersedia
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Tabel Data -->
+    <div class="mb-5">
+        <h4>Data Transmisi Radar</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-secondary text-center">
+                    <tr>
+                        <th rowspan="2">Stasiun</th>
+                        <th rowspan="2">Frekuensi</th>
+                        <th rowspan="2">Power<br>Forward</th>
+                        <th rowspan="2">Azimuth Ilan<br><u>Encoder</u></th>
+                        <th rowspan="2">Power<br><u>Reflected</u></th>
+                        <th colspan="1">Mod A</th>
+                        <th colspan="1">Mod C</th>
+                        <th colspan="3">Mod S</th>
+                        <th rowspan="2">Tanggal</th>
+                        <th rowspan="2">PIC</th>
+                        <th rowspan="2"><i class="bi bi-tools"></i></th>
+                    </tr>
+                    <tr class="text-center">
+                        <th>0.8 ms</th>
+                        <th>21 ms</th>
+                        <th>P1<br>0.8 ms</th>
+                        <th>P2<br>0.8 ms</th>
+                        <th>PG<br>112 ms</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in transmissions %}
+                    <tr>
+                        <td>{{ row.station_radar.nama_stasiun_radar }}</td>
+                        <td>{{ row.station_radar.frekuensi_radar }}</td>
+                        <td>{{ row.power_forward or '' }}</td>
+                        <td>{{ row.azimuth_ilan or '' }}</td>
+                        <td>{{ row.power_reflected or '' }}</td>
+                        <td>{{ row.integration_mod_a or '' }}</td>
+                        <td>{{ row.integration_mod_c or '' }}</td>
+                        <td>{{ row.mod_s_p1 or '' }}</td>
+                        <td>{{ row.mod_s_p2 or '' }}</td>
+                        <td>{{ row.mod_s_pg or '' }}</td>
+                        <td>{{ row.tanggal.strftime('%d %b %Y') }}</td>
+                        <td>{{ row.pic }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

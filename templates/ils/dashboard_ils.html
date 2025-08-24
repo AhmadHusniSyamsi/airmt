@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Dashboard ILS</h2>
+
+    <form method="GET" class="form-inline mb-3">
+        <div class="form-group mr-2">
+            <label for="lokasi">Lokasi:</label>
+            <select name="lokasi" class="form-control ml-2">
+                <option value="">Semua</option>
+                <option value="Dhoho">Dhoho</option>
+                <option value="Malang">Malang</option>
+                <option value="Surabaya">Surabaya</option>
+            </select>
+        </div>
+        <div class="form-group mr-2">
+            <label for="tanggal">Tanggal:</label>
+            <input type="date" name="tanggal" class="form-control ml-2">
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    <div id="chart-gp" class="mb-4">{{ chart_gp|safe }}</div>
+    <div id="chart-localizer" class="mb-4">{{ chart_localizer|safe }}</div>
+    <div id="chart-tdme" class="mb-4">{{ chart_tdme|safe }}</div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <strong>Ringkasan Data</strong>
+        </div>
+        <div class="card-body">
+            <p><strong>Jumlah Data G/P:</strong> {{ count_gp }}</p>
+            <p><strong>Jumlah Data Localizer:</strong> {{ count_localizer }}</p>
+            <p><strong>Jumlah Data TDME:</strong> {{ count_tdme }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

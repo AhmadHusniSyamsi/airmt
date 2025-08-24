@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-4"> Tabel Data Performance Check ILS</h3>
+
+<a href="{{ url_for('home') }}" class="btn btn-secondary mb-3">Kembali</a>
+<a href="{{ url_for('ils.add_transmission_ils') }}" class="btn btn-primary mb-3">Tambah Stasiun</a>
+<a href="{{ url_for('ils.dashboard_ils') }}" class="btn btn-danger mb-3">Lihat Dashboard</a>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Data Table ILS</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">Lokasi</th>
+                    <th rowspan="2">Tanggal</th>
+                    <th rowspan="2">PIC</th>
+                    <th colspan="6" class="text-center">G/P</th>
+                    <th colspan="6" class="text-center">Localizer</th>
+                    <th colspan="6" class="text-center">TDME</th>
+                </tr>
+                <tr>
+                    <!-- G/P -->
+                    <th>CSB Power</th>
+                    <th>SBO Power</th>
+                    <th>SDM 80</th>
+                    <th>Course DDM</th>
+                    <th>DS DDM</th>
+                    <th>CLR DDM</th>
+
+                    <!-- Localizer -->
+                    <th>CSB Power</th>
+                    <th>SBO Power</th>
+                    <th>SDM 40</th>
+                    <th>Course DDM</th>
+                    <th>DS DDM</th>
+                    <th>CLR DDM</th>
+
+                    <!-- TDME -->
+                    <th>TX1 Power</th>
+                    <th>Spacing 1</th>
+                    <th>Delay 1</th>
+                    <th>TX2 Power</th>
+                    <th>Spacing 2</th>
+                    <th>Delay 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in combined_data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ row.lokasi }}</td>
+                    <td>{{ row.tanggal }}</td>
+                    <td>{{ row.pic }}</td>
+
+                    <!-- G/P -->
+                    <td>{{ row.gp_csb_power }}</td>
+                    <td>{{ row.gp_sbo_power }}</td>
+                    <td>{{ row.gp_sdm_80 }}</td>
+                    <td>{{ row.gp_course_ddm }}</td>
+                    <td>{{ row.gp_ds_ddm }}</td>
+                    <td>{{ row.gp_clr_ddm }}</td>
+
+                    <!-- Localizer -->
+                    <td>{{ row.loc_csb_power }}</td>
+                    <td>{{ row.loc_sbo_power }}</td>
+                    <td>{{ row.loc_sdm_40 }}</td>
+                    <td>{{ row.loc_course_ddm }}</td>
+                    <td>{{ row.loc_ds_ddm }}</td>
+                    <td>{{ row.loc_clr_ddm }}</td>
+
+                    <!-- TDME -->
+                    <td>{{ row.tdme_tx1_power }}</td>
+                    <td>{{ row.tdme_spacing1 }}</td>
+                    <td>{{ row.tdme_delay1 }}</td>
+                    <td>{{ row.tdme_tx2_power }}</td>
+                    <td>{{ row.tdme_spacing2 }}</td>
+                    <td>{{ row.tdme_delay2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>{% endblock %}

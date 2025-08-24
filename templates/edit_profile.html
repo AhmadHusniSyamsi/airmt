@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h4>Edit Profil</h4>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label>Nama</label>
+                <input type="text" name="nama" value="{{ current_user.nama or '' }}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>Tanggal Lahir</label>
+                <input type="date" name="tanggal_lahir"
+                    value="{{ current_user.tanggal_lahir.strftime('%Y-%m-%d') if current_user.tanggal_lahir else '' }}"
+                    class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>Jabatan</label>
+                <input type="text" name="jabatan" value="{{ current_user.jabatan or '' }}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>NIP</label>
+                <input type="text" name="nip" value="{{ current_user.nip or '' }}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ current_user.email or '' }}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>No HP</label>
+                <input type="text" name="no_hp" value="{{ current_user.no_hp or '' }}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>Jenis Kelamin</label>
+                <select name="jenis_kelamin" class="form-control">
+                    <option value="">Pilih</option>
+                    <option value="Laki-laki" {% if current_user.jenis_kelamin=='Laki-laki' %}selected{% endif %}>
+                        Laki-laki</option>
+                    <option value="Perempuan" {% if current_user.jenis_kelamin=='Perempuan' %}selected{% endif %}>
+                        Perempuan</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Foto Profil</label>
+                <input type="file" name="photo" class="form-control">
+                {% if current_user.photo %}
+                <img src="{{ url_for('static', filename='uploads/' ~ current_user.photo) }}" class="img-thumbnail mt-2"
+                    style="width: 100px; height: 100px; object-fit: cover;">
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-success">Simpan</button>
+            <a href="{{ url_for('profile') }}" class="btn btn-secondary">Batal</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
